@@ -5,23 +5,22 @@ import Image from "next/image"
 import Hero from "../assets/login.png"
 import Logo from "../assets/logo.png"
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 interface Login {
-    image: string,
     username: string,
-    pass: string
+    password: string
 }
 
 const Login = () => {
-    const { register, handleSubmit, watch, formState: { errors }, reset } = useForm<Login>();
+    const { register, handleSubmit, formState: { errors } } = useForm<Login>();
+
     const onSubmit = async (data: Login) => {
         const result = await signIn("credentials", {
             username: data.username,
-            password: data.pass
+            password: data.password,
+            redirect: false,
         })
-        console.log(result);
-        
     }
 
     return (
@@ -38,8 +37,8 @@ const Login = () => {
                     </div>
                     <div className="flex flex-col gap-3 mt-5">
                         <label className="font-bold">Password</label>
-                        <input {...register("pass", { required: "Please Enter The Password" })} type="text" className=" outline-none border-none bg-pink-200 py-[10px] rounded px-2" />
-                        {errors.pass && <p className="text-red-500 text-sm">{errors.pass.message}</p>}
+                        <input {...register("password", { required: "Please Enter The Password" })} type="text" className=" outline-none border-none bg-pink-200 py-[10px] rounded px-2" />
+                        {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                     </div>
                     <button type="submit" className="bg-[#474BCA] text-white w-full py-[10px] mt-8 rounded cursor-pointer">Login</button>
                 </form>
@@ -47,7 +46,6 @@ const Login = () => {
                     <Link href="/signup" className="bg-[#474BCA] mb-5 text-white text-sm py-2 rounded w-1/3 text-center">Signup</Link>
                     <Image src={Hero} alt="Logo" width={450} />
                 </div>
-
             </div>
         </>
     )
