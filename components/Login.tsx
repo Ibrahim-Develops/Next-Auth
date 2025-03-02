@@ -5,23 +5,31 @@ import Image from "next/image"
 import Hero from "../assets/login.png"
 import Logo from "../assets/logo.png"
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 
 interface Login {
-    username: string,
-    password: string
+    username: string;
+    password: string,
 }
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<Login>();
-
+    const router = useRouter()
     const onSubmit = async (data: Login) => {
         const result = await signIn("credentials", {
             username: data.username,
             password: data.password,
             redirect: false,
-        })
-    }
+        });
+        if (result?.ok) {
+            router.push("/home"); 
+          } else {
+            console.error("Login failed:", result?.error);
+          }
+    };
+    
 
     return (
         <>
