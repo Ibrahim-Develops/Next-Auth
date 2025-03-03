@@ -8,7 +8,6 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-
 interface Login {
     username: string;
     password: string,
@@ -18,16 +17,25 @@ const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<Login>();
     const router = useRouter()
     const onSubmit = async (data: Login) => {
-        const result = await signIn("credentials", {
-            username: data.username,
-            password: data.password,
-            redirect: false,
-        });
-        if (result?.ok) {
-            router.push("/home"); 
-          } else {
-            console.error("Login failed:", result?.error);
-          }
+        
+        try {
+            const result = await signIn("credentials", {
+                username: data.username,
+                password: data.password,
+                redirect: false,
+            });
+
+            if (result?.ok) {
+                console.log(result);
+                
+                router.push("/home");
+            } else {
+                throw new Error(result?.error || "Invalid credentials");
+            }
+        } catch (error: any) {
+            alert(error.message); 
+        }
+
     };
     
 
